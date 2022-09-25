@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html html xmlns:th="http://www.thymeleaf.org/" lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Add Task</title>
 </head>
 <body>
-$END$
+Add Task
+<form action="/tasks/add" method="post">
+  <input type="text" name="title" placeholder="Please insert  title"/><br>
+  Description <textarea name="description"> </textarea><br>
+  <input type="date" name="deadline"/><br>
+  <select name="status">
+    <option value="TODO">TODO</option>
+    <option value="IN-PROGRESS">IN-PROGRESS</option>
+    <option value="TESTING">TESTING</option>
+    <option value="DONE">DONE</option>
+  </select><br>
+  <select name="user.id">
+    <option value="0">unassigned</option>
+    <option th:each="user: ${users}"th:text="${user.name + ' ' + user.surname}" th:value="${user.id}"></option>
+
+  </select><br>
+  <input type="submit" value="add task">
+</form>
+
 </body>
-</html>
+</html>a
