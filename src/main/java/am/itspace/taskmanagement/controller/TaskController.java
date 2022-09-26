@@ -10,8 +10,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class TaskController {
@@ -22,8 +24,10 @@ public class TaskController {
 
     @GetMapping(value = "/tasks")
     public String task(ModelMap modelMap) {
-        List<Task> all = taskRepositury.findAll();
-        modelMap.addAttribute("tasks", all);
+        List<Task> tasks = taskRepositury.findAll();
+        List<User> users = userRepository.findAll();
+        modelMap.addAttribute("tasks", tasks);
+        modelMap.addAttribute("users",users);
         return "tasks";
     }
 
@@ -41,5 +45,23 @@ public class TaskController {
         }
         taskRepositury.save(task);
         return "redirect:/tasks";
+    }
+
+    @PostMapping(value = "/tasks/changeUser")
+    public String changeUser(@RequestParam("userId") int userId, @RequestParam("taskId") int taskId){
+       Optional<Task> taskOptional = taskRepositury.findById(taskId);
+       Optional<User> userOptional = userRepository.findById(userId);
+       if(taskOptional.isPresent() && userOptional.isPresent()){
+           Task task = taskOptional.get();
+           User user = userOptional.get();
+           if(task.getUser()!=user){
+               task.setUser(user);
+               taskRepositury.save(task);
+           }
+       }else if(taskOptional.isPresent() && userId==0){
+           taskOptional.get().setUser(null);
+           taskRepositury.save(taskOptional.get());
+       }
+       return "redirect:/tasks";
     }
 }
